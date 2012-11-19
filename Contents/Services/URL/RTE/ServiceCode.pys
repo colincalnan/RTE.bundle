@@ -1,0 +1,52 @@
+####################################################################################################
+def NormalizeURL(url):
+    return url
+
+####################################################################################################
+def MetadataObjectForURL(url):
+    
+    feed = RSS.FeedFromURL(url)
+    
+    title = feed.items[0].title
+    desc = feed.items[0].description
+    duration = feed.items[0].rte_duration['ms']
+    thumb = feed.items[0].media_thumbnail['url']
+    link = feed.items[0].link
+    
+	return VideoClipObject(
+        url=link, 
+        title=title, 
+        summary=desc, 
+        duration=duration, 
+        thumb=thumb)
+
+####################################################################################################
+def MediaObjectsForURL(url):
+
+	return [
+		MediaObject(
+			parts = [PartObject(key=Callback(PlayVideo, url=url))],
+			)
+	]
+
+####################################################################################################
+@indirect
+def PlayVideo(url):
+    feed = RSS.FeedFromURL(url)
+    found = False
+    i = 0
+    rtmp_url = ''
+    playpath = ''
+
+    while not found:
+        content_type = feed.items[0].media_group.media_content[i]['rte:format']
+        if content_type == "content":
+            rtmp_parts = (feed.items[0].media_group.media_content[i]['url']).split('mp4:')
+            rtmp_url = rtmp_parts[0]
+            playpath = 'MP4:' + rtmp_parts[1]
+            found = True
+        else:
+            i = i+1
+            pass
+
+	return IndirectResponse(VideoClipObject, key=RTMPVideoURL(url=rtmp_url, clip=playpath))
