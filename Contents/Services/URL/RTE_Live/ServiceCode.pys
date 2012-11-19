@@ -1,0 +1,22 @@
+####################################################################################################
+def NormalizeURL(url):
+    return url
+
+####################################################################################################
+def MetadataObjectForURL(url):
+	return VideoClipObject(
+        title = "Latest Irish News",
+        summary = "Watch the latest news and weather updates with RTÉ News Now. Streamed 24-hours a day, seven days a week: Ireland's first online rolling news channel includes all the latest RTÉ news bulletins.",
+        thumb = "http://img.rasset.ie/0003a2ae-512.jpg"
+    )
+
+####################################################################################################
+def MediaObjectsForURL(url):
+
+	return [
+		MediaObject(
+			parts = [PartObject(key=WebVideoURL(url))],
+			)
+	]
+
+
