@@ -8,7 +8,7 @@ ART  = 'art-default.jpg'
 ICON = 'icon-default.png'
 
 FEEDBASE = "http://dj.rte.ie/vodfeeds/feedgenerator/"
-LIVEURL = "http://www.rte.ie/player/#l=7"
+LIVEURL = "http://www.rte.ie/player/live/7" #"http://www.rte.ie/player/#l=7"
 
 MRSS  = {'media':'http://search.yahoo.com/mrss/'}
 RTE   = {'rte':'http://www.rte.ie/schemas/vod'}
@@ -51,12 +51,12 @@ def MainMenu():
     oc = ObjectContainer()
     
     #Live Stream
-    #if Platform.HasFlash:
-    #    feed = RSS.FeedFromURL(FEEDBASE + "videos/live/?id=7")
-    #    desc = feed.entries[0].description
-    #    thumb = feed.entries[0].media_thumbnail[0]['url']
-    #    link = LIVEURL + Dict['geo_code']
-    #    oc.add(VideoClipObject(url=link, title="Live", summary=desc, thumb=thumb))
+    if Platform.HasFlash:
+        feed = RSS.FeedFromURL(FEEDBASE + "videos/live/?id=7")
+        desc = feed.entries[0].description
+        thumb = feed.entries[0].media_thumbnail[0]['url']
+        link = LIVEURL + Dict['geo_code']
+        oc.add(VideoClipObject(url=link, title="Live", summary=desc, thumb=thumb)) 
 
     oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"latest/?limit=20", title="Latest"), title="Latest"))
     oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"lastchance/?limit=20", title="Last Chance"), title="Last Chance"))
@@ -77,7 +77,7 @@ def CategoriesSubMenu():
     oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"genre/?id=Lifestyle", title="Lifestyle"), title="Lifestyle"))
     oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"genre/?id=Arts%20and%20Music", title="Arts and Music"), title="Arts and Music"))
     oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"genre/?id=Religious%20and%20Irish%20Language", title="Religious and Irish language"), title="Religious and Irish language"))
-    oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"genre/?id=RT%C3%89jr%2C%20TRT%C3%89%2C%20Two%20Tube", title="RTÉjr, TRTÉ, Two Tube"), title="RTÉjr, TRTÉ, Two Tube"))
+    oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"genre/?id=RT%C3%89jr%2C%20TRT%C3%89%2C%20Two%20Tube", title=u"RT\u00C9jr, TRT\u00C9, Two Tube"), title=u"RT\u00C9jr, TRT\u00C9, Two Tube")) 
 
     return oc
 
@@ -111,4 +111,6 @@ def RSS_parser(pageurl, title):
         oc.add(VideoClipObject(url=link, title=title, summary=desc, duration=duration, thumb=Resource.ContentsOfURLWithFallback(url=thumb, fallback=ICON)))
         i = i+1
 
+    if len(oc) < 1:
+        return ObjectContainer(header="Empty", message="No content found.")
     return oc
