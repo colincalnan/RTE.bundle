@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>URL</key>
+	<dict>
+		<key>RTE</key>
+		<dict>
+			<key>URLPatterns</key>
+			<array>
+				<string>http://dj.rte.ie/vodfeeds/feedgenerator/videos/show/\?id=[0-9]+</string>
+			</array>
+		</dict>
+        <key>RTE_Live</key>
+    	<dict>
+			<key>URLPatterns</key>
+			<array>
+				<string>http://www\.rte\.ie/player/.+</string>
+			</array>
+		</dict>
+	</dict>
+    <key>PlexFrameworkFlags</key>
+    <array>
+        <string>UseRealRTMP</string>
+    </array>
+</dict>
+</plist>
