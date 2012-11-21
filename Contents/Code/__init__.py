@@ -46,17 +46,17 @@ def UpdateCache():
   HTTP.PreCache(FEEDBASE + "genre/?id=RT%C3%89jr%2C%20TRT%C3%89%2C%20Two%20Tube")
 
 ####################################################################################################
-@handler('/video/rte', NAME, thumb=icon, art=ART)
+@handler('/video/rte', NAME, thumb=ICON, art=ART)
 def MainMenu():
     oc = ObjectContainer()
     
     #Live Stream
-    if Platform.HasFlash:
-        feed = RSS.FeedFromURL(FEEDBASE + "videos/live/?id=7")
-        desc = feed.items[0].description
-        thumb = feed.items[0].media_thumbnail['url']
-        link = LIVEURL + Dict['geo_code']
-        oc.add(VideoClipObject(url=link, title="Live", summary=desc, thumb=thumb))
+    #if Platform.HasFlash:
+    #    feed = RSS.FeedFromURL(FEEDBASE + "videos/live/?id=7")
+    #    desc = feed.entries[0].description
+    #    thumb = feed.entries[0].media_thumbnail[0]['url']
+    #    link = LIVEURL + Dict['geo_code']
+    #    oc.add(VideoClipObject(url=link, title="Live", summary=desc, thumb=thumb))
 
     oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"latest/?limit=20", title="Latest"), title="Latest"))
     oc.add(DirectoryObject(key=Callback(RSS_parser, pageurl=FEEDBASE+"lastchance/?limit=20", title="Last Chance"), title="Last Chance"))
@@ -98,16 +98,17 @@ def AZSubMenu():
 ####################################################################################################
 @route('/video/rte/rss')
 def RSS_parser(pageurl, title):
-    oc = MediaContainer(title2=title)
+    oc = ObjectContainer(title2=title)
 
-    feed = RSS.FeedFromURL(url)
+    feed = RSS.FeedFromURL(pageurl)
     i = 0
-    while i < len(feed.items):
-        title = feed.items[i].title
-        desc = feed.items[i].description
-        duration = feed.items[i].rte_duration['ms']
-        thumb = feed.items[i].media_thumbnail['url']
-        link = feed.items[i].link
+    while i < len(feed.entries):
+        title = feed.entries[i].title
+        desc = feed.entries[i].description
+        duration = int(feed.entries[i].rte_duration['ms'])
+        thumb = feed.entries[i].media_thumbnail[0]['url']
+        link = feed.entries[i].id
         oc.add(VideoClipObject(url=link, title=title, summary=desc, duration=duration, thumb=Resource.ContentsOfURLWithFallback(url=thumb, fallback=ICON)))
+        i = i+1
 
     return oc

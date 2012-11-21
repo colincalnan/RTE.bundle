@@ -1,3 +1,5 @@
+RTE_SWF = 'http://www.rte.ie/static/player/swf/osmf2_2012_10_19.swf'
+
 ####################################################################################################
 def NormalizeURL(url):
     return url
@@ -7,13 +9,13 @@ def MetadataObjectForURL(url):
     
     feed = RSS.FeedFromURL(url)
     
-    title = feed.items[0].title
-    desc = feed.items[0].description
-    duration = feed.items[0].rte_duration['ms']
-    thumb = feed.items[0].media_thumbnail['url']
-    link = feed.items[0].link
+    title = feed.entries[0].title
+    desc = feed.entries[0].description
+    duration = int(feed.entries[0].rte_duration['ms'])
+    thumb = feed.entries[0].media_thumbnail['url']
+    link = feed.entries[0].link
     
-	return VideoClipObject(
+    return VideoClipObject(
         url=link, 
         title=title, 
         summary=desc, 
@@ -39,9 +41,9 @@ def PlayVideo(url):
     playpath = ''
 
     while not found:
-        content_type = feed.items[0].media_group.media_content[i]['rte:format']
+        content_type = feed.entries[0].media_content[i]['rte:format']
         if content_type == "content":
-            rtmp_parts = (feed.items[0].media_group.media_content[i]['url']).split('mp4:')
+            rtmp_parts = (feed.entries[0].media_content[i]['url']).split('mp4:')
             rtmp_url = rtmp_parts[0]
             playpath = 'MP4:' + rtmp_parts[1]
             found = True
@@ -49,4 +51,4 @@ def PlayVideo(url):
             i = i+1
             pass
 
-	return IndirectResponse(VideoClipObject, key=RTMPVideoURL(url=rtmp_url, clip=playpath))
+    return IndirectResponse(VideoClipObject, key=RTMPVideoURL(url=rtmp_url, clip=playpath, swf_url=RTE_SWF))
